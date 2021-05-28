@@ -1,0 +1,23 @@
+{
+  "name": "bot-scantrad",
+  "version": "1.0.0",
+  "description": "Un bot discord qui annonce automatiquement les derniers chapitres sortis grâce au flux rss.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pamlol/bot-scantrad.git"
+  },
+  "author": "pamlol",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pamlol/bot-scantrad/issues"
+  },
+  "homepage": "https://github.com/pamlol/bot-scantrad#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "discord.js": "^12.5.3"
+  }
+}

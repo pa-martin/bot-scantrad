@@ -1,0 +1,6 @@
+# N'a pas sa place sur un git
+.vscode/
+node_modules/
+
+# Contient des infos sensible
+config.json
