@@ -1,6 +1,7 @@
-# N'a pas sa place sur un git
+# N'a pas sa place sur le git
 .vscode/
 node_modules/
+commands/test*.js
 
-# Contient des infos sensible
-config.json
+# Contient des infos
+servers/*/
