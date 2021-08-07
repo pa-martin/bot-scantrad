@@ -10,12 +10,12 @@ module.exports.run = async (client, message, args, functions) => {
         manga.shift();
 
         for(let i=0; i<manga.length; i++) {
-            manga[i] = manga[i].replace("<title><![CDATA[Scan - ","").replace("]]></title>", "");
+            manga[i] = manga[i].replace("<title><![CDATA[Scan - ","").replace("]]></title>", "").replace(":","-");
             manga[i] = [manga[i].replace(/( Chapitre [0-9]+)/g,""), manga[i].match(/(Chapitre ([0-9])+)/g)[0].replace("Chapitre ", "")];
             titres[i] = manga[i][0];
         }
 
-        let directoryPath = require('path').join(`./servers`, message.guild.id), files = [];
+        let directoryPath = require('path').join(`./servers/${message.guild.id}/`, "manga"), files = [];
         fs.readdir(directoryPath, function (err, result) {
             if (err) {
                 return console.log(`${functions.time(ERROR)} Imposible d'accéder au dossier !`);
@@ -25,10 +25,11 @@ module.exports.run = async (client, message, args, functions) => {
             });
             files.forEach(file => {
                 try {
-                    let data = JSON.parse(fs.readFileSync(`./servers/${message.guild.id}/${file}.json`));
+                    let data = JSON.parse(fs.readFileSync(`./servers/${message.guild.id}/manga/${file}.json`));
+                    if(titres.indexOf(file) == -1) return;   // évite les erreurs s'il n'y a pas de chapitre récent (pas dans la liste des chaps)
                     data.dernierChap = manga[titres.indexOf(file)][1];
 
-                    fs.writeFile(`./servers/${message.guild.id}/${file}.json`, JSON.stringify(data), (err) => {
+                    fs.writeFile(`./servers/${message.guild.id}/manga/${file}.json`, JSON.stringify(data), (err) => {
                         if(err) console.log(functions.time("ERROR") + err);
                     });
                 }catch(err){
@@ -38,5 +39,6 @@ module.exports.run = async (client, message, args, functions) => {
             console.log(`${functions.time("INFO")} Un refresh a été effectué sur le serveur "${message.guild.name}".`);
             message.channel.send(`Refresh terminé !`);
         });
-    });
+    })
+    .catch(err => console.log(err));
 }

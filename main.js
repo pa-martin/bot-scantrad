@@ -5,11 +5,14 @@ const config = require('./config.json');
 const client = new Discord.Client();
 const functions = new pamlol(client);
 
+const buttons = require('discord-buttons');
+buttons(client);
+
 client.on('ready', () => {
     console.log(`${functions.time(`INFO`)} started`);
-    functions.update();
+    functions.update(functions);
     setInterval(async function(){ functions.activityMove(10); }, 10000);
-    setInterval(async function(){ functions.update(); }, 60000);
+    setInterval(async function(){ functions.update(functions); }, 60000);
 });
 
 client.on('message', message => {
@@ -22,7 +25,7 @@ client.on('message', message => {
   
     try {
       let commandFile = require(`./commands/${command}.js`);
-      commandFile.run(client, message, args, functions);
+      commandFile.run(client, message, args, functions, buttons);
     } catch (err) {}
 });
 
@@ -30,7 +33,17 @@ client.on('guildCreate', guild => {
 	const fs = require('fs');
 	fs.mkdirSync(require('path').join(`${__dirname}/servers/`, guild.id), (err) => {
 		if (err) {
-			return console.log(`${functions.time("ERROR")} Impossible de créer le dossier pour le server ${guild.name} (id : ${guild.id}).`);;
+			return console.log(`${functions.time("ERROR")} Impossible de créer le dossier principal pour le server ${guild.name} (id : ${guild.id}).`);;
+		}
+	});
+	fs.mkdirSync(require('path').join(`${__dirname}/servers/${guild.id}`, "manga"), (err) => {
+		if (err) {
+			return console.log(`${functions.time("ERROR")} Impossible de créer le dossier "manga" pour le server ${guild.name} (id : ${guild.id}).`);;
+		}
+	});
+	fs.mkdirSync(require('path').join(`${__dirname}/servers/${guild.id}`, "anime"), (err) => {
+		if (err) {
+			return console.log(`${functions.time("ERROR")} Impossible de créer le dossier "anime" pour le server ${guild.name} (id : ${guild.id}).`);;
 		}
 	});
 });

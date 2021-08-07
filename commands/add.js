@@ -5,10 +5,12 @@ module.exports.run = async (client, message, args, functions) => {
         case "manga":
             try {
                 let commandFile = require(`./add manga.js`);
-                commandFile.run(client, message, args.shift(), functions);
+                args.shift();
+                commandFile.run(client, message, args, functions);
             } catch (err) {}
             break;
         default:
+            message.channel.send(`Merci de préciser "manga" ou "anime" !`);
             break;
     }
 }
