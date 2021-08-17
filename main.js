@@ -5,8 +5,8 @@ const config = require('./config.json');
 const client = new Discord.Client();
 const functions = new pamlol(client);
 
-const buttons = require('discord-buttons');
-buttons(client);
+// const buttons = require('discord-buttons');
+// buttons(client);
 
 client.on('ready', () => {
     console.log(`${functions.time(`INFO`)} started`);
@@ -25,7 +25,7 @@ client.on('message', message => {
   
     try {
       let commandFile = require(`./commands/${command}.js`);
-      commandFile.run(client, message, args, functions, buttons);
+      commandFile.run(client, message, args, functions);
     } catch (err) {}
 });
 
