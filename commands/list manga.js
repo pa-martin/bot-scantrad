@@ -7,6 +7,7 @@ module.exports.run = async (client, message, args, functions) => {
             return console.log(`${functions.time(ERROR)} Imposible d'accéder au dossier !`);
         }
         let text = `Voici, venu, la liste des mangas (pour ce serveur) : \`\`\`diff\n`
+        result.sort();
         result.forEach(function (file) {
             const infos = JSON.parse(fs.readFileSync(`./servers/${message.guild.id}/manga/${file}`));
             text += `+ ${file.replace(".json", "")}\n-   Chapitre ${infos.dernierChap}\n`; 

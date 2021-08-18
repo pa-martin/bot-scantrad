@@ -37,7 +37,7 @@ module.exports.run = async (client, message, args, functions) => {
                 }
             });
             console.log(`${functions.time("INFO")} Un refresh a été effectué sur le serveur "${message.guild.name}".`);
-            message.channel.send(`Refresh terminé !`);
+            if(args[0] != "true") message.channel.send(`Refresh terminé !`);
         });
     })
     .catch(err => console.log(err));

@@ -27,7 +27,7 @@ module.exports.run = async (client, message, args, functions) => {
         text += "```";
         message.channel.send(text);
 
-        message.channel.awaitMessages(m => m.author.id == message.author.id, {max: 1, time: 30000})
+        message.channel.awaitMessages({filter:(m => m.author.id === message.author.id), max: 1, time: 30000})
         .then(collected => {
             let m = collected.first();
             if(!m.content.match(/^-?[0-9]+$/)) { m.channel.send(`Merci d'entrer un nombre !`); return; }
@@ -44,11 +44,15 @@ module.exports.run = async (client, message, args, functions) => {
                 else {
                     console.log(`${functions.time("INFO")} Le manga ${manga[m.content]} à été ajouté pour le serveur ${m.guild.name}.`);
                     m.channel.send(`Le manga ${manga[m.content]} à bien été ajouté ! Setup les annonces avec la commande \`!setup manga ${manga[m.content]}\`.`);
+                    require(`./refresh.js`).run(client, message, ["true"], functions);
                 }
             });
         }).catch((err) => {
             message.reply('Temps écoulé. ⌛');
             if(err) console.log(functions.time("ERROR") + err);
         });
+    })
+    .catch(err => {
+        console.log(err)
     });
 }

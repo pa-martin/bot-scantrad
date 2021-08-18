@@ -8,7 +8,7 @@ module.exports.run = async (client, message, args, functions) => {
         }
         if(!result.includes(`${message.content}.json`)) { message.channel.send(`Merci de renseigner un nom de manga précédemment ajouté avec la commande \`!add manga\`.`); return; }
         message.channel.send(`T'as un petit lien pour les chapitres bg ?`);
-        message.channel.awaitMessages(m => m.author.id === message.author.id, {max: 1, time: 30000})
+        message.channel.awaitMessages({filter:(m => m.author.id === message.author.id), max: 1, time: 30000})
         .then(collected => {
             let m = collected.first();
             if(!m.content.startsWith("https://scantrad.net/mangas/")) { m.channel.send(`T'es sûr de ton lien bg ? (${m.content})\nIl ne correspond à la norme (https://scantrad.net/mangas/).`); return; }
@@ -21,7 +21,7 @@ module.exports.run = async (client, message, args, functions) => {
             });
             message.channel.send(`Oki parfait, le lien a bien été ajouté. T'as pas un petit channel pour annoncer les derniers chap stp ?`);
             
-            message.channel.awaitMessages(m => m.author.id === message.author.id, {max: 1, time: 30000})
+            message.channel.awaitMessages({filter:(m => m.author.id === message.author.id), max: 1, time: 30000})
             .then(collected => {
                 let m = collected.first();
                 if(!m.content.match(/(^<#[0-9]+>$)|(^[0-9]+$)/g)) { m.channel.send(`Merci de rentrer un channel.`); return; }

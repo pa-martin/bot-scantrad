@@ -18,8 +18,7 @@
   "homepage": "https://github.com/pamlol/bot-scantrad#readme",
   "dependencies": {
     "colors": "^1.4.0",
-    "discord-buttons": "^3.2.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.1.0",
     "node-fetch": "^2.6.1"
   }
 }

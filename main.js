@@ -1,12 +1,11 @@
+// const { Client, Intents } = require('discord.js');
 const Discord = require('discord.js');
 const pamlol = require("./functions.js");
 const config = require('./config.json');
 
-const client = new Discord.Client();
-const functions = new pamlol(client);
-
-// const buttons = require('discord-buttons');
-// buttons(client);
+// const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
+const functions = new pamlol(client, Discord);
 
 client.on('ready', () => {
     console.log(`${functions.time(`INFO`)} started`);
@@ -15,7 +14,7 @@ client.on('ready', () => {
     setInterval(async function(){ functions.update(functions); }, 60000);
 });
 
-client.on('message', message => {
+client.on('messageCreate', message => {
     if(message.author.bot) return;
     if(!message.content.startsWith(config.prefix)) return;
 	if(functions.checkMp(message)) return;
@@ -25,7 +24,7 @@ client.on('message', message => {
   
     try {
       let commandFile = require(`./commands/${command}.js`);
-      commandFile.run(client, message, args, functions);
+      commandFile.run(client, message, args, functions, Discord);
     } catch (err) {}
 });
 
@@ -54,6 +53,9 @@ client.on('guildDelete', guild => {
 			return console.log(`${functions.time("ERROR")} Impossible de supprimer le dossier pour le server ${guild.name} (id : ${guild.id}).`);;
 		}
 	});
+});
+client.on('interactionCreate', async interaction => {
+	if (interaction.isButton()) functions.buttonClick(interaction);
 });
 
 client.login(config.token);

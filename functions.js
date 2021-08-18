@@ -1,6 +1,7 @@
 module.exports = class pamlol {
-    constructor(client) {
+    constructor(client, Discord) {
         this.client = client;
+        this.Discord = Discord;
     }
     // Time en ms
     sleep(time) {
@@ -105,10 +106,10 @@ module.exports = class pamlol {
 
         switch (date.getSeconds()%20*delay < delay) {
             case true:
-                this.client.user.setActivity("!add manga", {type: 'WATCHING'}).catch(console.error);
+                this.client.user.setActivity("!add manga", {type: 'COMPETING'});
                 break;
             case false:
-                this.client.user.setActivity(`@pam#6088`, { type: 'WATCHING'}).catch(console.error);
+                this.client.user.setActivity(`@pam#6088`, { type: 'WATCHING'});
                 break;
         }
     }
@@ -116,5 +117,12 @@ module.exports = class pamlol {
         if(message.author.id == "217200239264661504" || message.guild.member(message.author).hasPermission('ADMINISTRATOR')) return true;
         message.reply(`T'as pas les droits mskn.`)
         return false;
+    }
+    buttonClick(interaction) {
+        interaction.deferUpdate();
+        interaction.deleteReply();
+        if(interaction.customId === 'anime') interaction.channel.send("Désolé, la partie anime n'est pas encore prête.");
+        else if(interaction.customId === 'manga') require(`./commands/list manga.js`).run(this.client, interaction, [], this);
+        else if(interaction.customId === '') return;
     }
 }
