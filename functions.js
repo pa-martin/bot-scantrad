@@ -61,7 +61,7 @@ module.exports = class pamlol {
     
             for(let i=0; i<manga.length; i++) {
                 manga[i] = manga[i].replace("<title><![CDATA[Scan - ","").replace("]]></title>", "").replace(":","-");
-                manga[i] = [manga[i].replace(/( Chapitre [0-9]+)/g,""), manga[i].match(/(Chapitre ([0-9])+)/g)[0].replace("Chapitre ", "")];
+                manga[i] = [manga[i].replace(/( Chapitre ([0-9]|\.)+)/g,""), manga[i].match(/(Chapitre ([0-9]|\.)+)/g)[0].replace("Chapitre ", "")];
                 titres[i] = manga[i][0];
             }
     
@@ -82,7 +82,7 @@ module.exports = class pamlol {
                             else if(data.dernierChap === manga[titres.indexOf(file)][1]) return;
         
                             data.dernierChap = manga[titres.indexOf(file)][1];
-                            guild.channels.cache.get(data.channelID).send(`Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`);
+                            guild.channels.cache.get(data.channelID).send({content: `Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`});
 
                             fs.writeFile(`./servers/${guild.id}/manga/${file}.json`, JSON.stringify(data), (err) => {
                                 if(err) console.log(functions.time("ERROR") + err);
@@ -95,7 +95,8 @@ module.exports = class pamlol {
             });
         })
         .catch(err => {
-            if(err.message.includes("request to https://scantrad.net/rss/ failed, reason: connect ETIMEDOUT 185.178.208.176:443")) console.log("timeout");
+            if(err.message.includes("request to https://scantrad.net/rss/ failed, reason: connect ETIMEDOUT 185.178.208.176:443")) console.log("erreur de réponse");
+            else if(err.code = 'ENOTFOUND') console.log('erreur de connexion')
             else if(err.message.includes("request to https://scantrad.net/rss/ failed, reason: self signed certificate")) console.log("erreur de certificat");
             else console.log(err);
         });
@@ -114,15 +115,69 @@ module.exports = class pamlol {
         }
     }
     hasRight(message) {
-        if(message.author.id == "217200239264661504" || message.guild.member(message.author).hasPermission('ADMINISTRATOR')) return true;
+        if(message.member.id == "217200239264661504" || message.guild.member(message.author).hasPermission('ADMINISTRATOR')) return true;
         message.reply(`T'as pas les droits mskn.`)
         return false;
     }
-    buttonClick(interaction) {
+    async buttonClick(interaction) {
         interaction.deferUpdate();
-        interaction.deleteReply();
-        if(interaction.customId === 'anime') interaction.channel.send("Désolé, la partie anime n'est pas encore prête.");
-        else if(interaction.customId === 'manga') require(`./commands/list manga.js`).run(this.client, interaction, [], this);
+        // interaction.deleteReply();
+        if(interaction.customId.includes('anime')) interaction.channel.send("Désolé, la partie anime n'est pas encore prête.");
+        else if(interaction.customId === 'mangaSetup') this.getUnsetup(interaction, 'manga');
+        else if(interaction.customId.includes('manga')) require(`./commands/${interaction.customId.replace("manga","").toLowerCase()} manga.js`).run(this.client, interaction, [], this);
         else if(interaction.customId === '') return;
+    }
+    createButton(id, label, style) {
+        return new this.Discord.MessageActionRow()
+		.addComponents(
+            new this.Discord.MessageButton()
+            .setCustomId(id)
+            .setLabel(label)
+            .setStyle(style),
+        );
+    }
+    getUnsetup(message, type) {
+        let elClient = this.client;
+        const fs = require('fs');
+        if(type != "manga" && type != "anime") return;
+        let directoryPath = require('path').join(`./servers/${message.guild.id}/`, type), files = [];
+        fs.readdir(directoryPath, function (err, result) {
+            if (err) {
+                return console.log(`${functions.time(ERROR)} Imposible d'accéder au dossier !`);
+            }
+            let text = '```diff\n';
+            result.forEach(function (file) {
+                try {
+                    const data = JSON.parse(fs.readFileSync(`./servers/${message.guild.id}/manga/${file}`));
+                    const testChan = data.channelID === "" || data.channelID === null;
+                    const testLink = data.lienChap === "" || data.lienChap === null;
+                    
+                    if(testChan || testChan) {
+                        text += `+ ${file.replace('.json','')} (n°${files.length+1})\n-  `;
+                    
+                        if(testChan && testLink) text += "n'a rien de défini\n";
+                        else if(testChan) text += "n'a pas de channel défini\n";
+                        else if(testLink) text += "n'a pas de lien défini\n";
+
+                        files.push(file.replace(".json", ""));
+                    }
+                }catch(err){
+                    console.log(err);
+                }
+            });
+            if(text.endsWith('```diff\n')) text += "+ Tous les mangas sont bien configurés !";
+            text += '```';
+
+            message.channel.send(text)
+            .then(m => { setTimeout( async function () { m.delete()} , 10000) });
+            message.channel.awaitMessages({filter:(m => m.member.id === message.member.id), max: 1, time: 30000})
+            .then(collected => {
+                let m = collected.first();
+                if(!m.content.match(/^[0-9]+$/g)) { m.channel.send("Merci d'entrer le nombre correspondant au manga que tu souhaites configurer.").then(m => { setTimeout(async function () { m.delete()} , 3000) }); m.delete(); return; }
+                if(parseInt(m.content) < 1 || parseInt(m.content) > files.length) { m.channel.send({content:"Merci d'entrer un nombre présent dans la liste."}).then(m => { setTimeout(async function () { m.delete()} , 3000) }); m.delete(); return; }
+                m.delete();
+                require(`./commands/setup manga.js`).run(elClient, message, files[parseInt(m.content)-1].split(' '), this);
+            });
+        });
     }
 }

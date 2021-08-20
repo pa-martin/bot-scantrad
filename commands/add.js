@@ -10,7 +10,9 @@ module.exports.run = async (client, message, args, functions) => {
             } catch (err) {}
             break;
         default:
-            message.channel.send(`Merci de préciser "manga" ou "anime" !`);
+            const mangaButton = functions.createButton('mangaAdd', 'Manga', 'PRIMARY');
+            const animeButton = functions.createButton('animeAdd', 'Anime', 'PRIMARY');
+            message.channel.send({content: `Plutôt manga ou anime ?`, components: [mangaButton, animeButton] });
             break;
     }
 }

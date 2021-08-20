@@ -11,7 +11,7 @@ module.exports.run = async (client, message, args, functions) => {
 
         for(let i=0; i<manga.length; i++) {
             manga[i] = manga[i].replace("<title><![CDATA[Scan - ","").replace("]]></title>", "").replace(":","-");
-            manga[i] = [manga[i].replace(/( Chapitre [0-9]+)/g,""), manga[i].match(/(Chapitre ([0-9])+)/g)[0].replace("Chapitre ", "")];
+            manga[i] = [manga[i].replace(/( Chapitre ([0-9]|\.)+)/g,""), manga[i].match(/(Chapitre ([0-9]|\.)+)/g)[0].replace("Chapitre ", "")];
             titres[i] = manga[i][0];
         }
 
@@ -36,7 +36,7 @@ module.exports.run = async (client, message, args, functions) => {
                     console.log(err);
                 }
             });
-            console.log(`${functions.time("INFO")} Un refresh a été effectué sur le serveur "${message.guild.name}".`);
+            if(args[0] != "true") console.log(`${functions.time("INFO")} Un refresh a été effectué sur le serveur "${message.guild.name}".`);
             if(args[0] != "true") message.channel.send(`Refresh terminé !`);
         });
     })

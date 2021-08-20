@@ -1,6 +1,4 @@
-module.exports.run = async (client, message, args, functions, buttons) => {
-    if(!functions.hasRight(message)) return;
-    
+module.exports.run = async (client, message, args, functions) => {    
     switch(args[0]) {
         case "manga":
             try {
@@ -17,7 +15,9 @@ module.exports.run = async (client, message, args, functions, buttons) => {
             } catch (err) {}
             break;
         default:
-            message.channel.send(`Merci de préciser "manga" ou "anime" !`);
+            const mangaButton = functions.createButton('mangaGet', 'Manga', 'PRIMARY');
+            const animeButton = functions.createButton('animeGet', 'Anime', 'PRIMARY');
+            message.channel.send({content: `Plutôt manga ou anime ?`, components: [mangaButton, animeButton] });
             break;
     }
 }

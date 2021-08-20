@@ -10,7 +10,7 @@ module.exports.run = async (client, message, args, functions) => {
         titres.shift();
 
         for(let i=0; i<titres.length; i++) {
-            titres[i] = titres[i].replace("<title><![CDATA[Scan - ","").replace("]]></title>", "").replace(/( Chapitre [0-9]+)/g,"").replace(":","-");
+            titres[i] = titres[i].replace("<title><![CDATA[Scan - ","").replace("]]></title>", "").replace(/( Chapitre ([0-9]|\.)+)/g,"").replace(":","-");
 
             let already = false;
             for(let j=0; j<manga.length; j++){
@@ -27,7 +27,7 @@ module.exports.run = async (client, message, args, functions) => {
         text += "```";
         message.channel.send(text);
 
-        message.channel.awaitMessages({filter:(m => m.author.id === message.author.id), max: 1, time: 30000})
+        message.channel.awaitMessages({filter:(m => m.member.id === message.member.id), max: 1, time: 30000})
         .then(collected => {
             let m = collected.first();
             if(!m.content.match(/^-?[0-9]+$/)) { m.channel.send(`Merci d'entrer un nombre !`); return; }

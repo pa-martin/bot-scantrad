@@ -24,7 +24,7 @@ client.on('messageCreate', message => {
   
     try {
       let commandFile = require(`./commands/${command}.js`);
-      commandFile.run(client, message, args, functions, Discord);
+      commandFile.run(client, message, args, functions);
     } catch (err) {}
 });
 

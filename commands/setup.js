@@ -5,7 +5,8 @@ module.exports.run = async (client, message, args, functions) => {
         case "manga":
             try {
                 let commandFile = require(`./setup manga.js`);
-                message.content = message.content.slice(("!setup manga ").length);
+                // message.content = message.content.slice(("!setup manga ").length);
+                args.shift();
                 commandFile.run(client, message, args, functions);
             } catch (err) {}
             break;
@@ -17,7 +18,9 @@ module.exports.run = async (client, message, args, functions) => {
             } catch (err) {}
             break;
         default:
-            message.channel.send(`Merci de préciser "manga" ou "anime" !`);
+            const mangaButton = functions.createButton('mangaSetup', 'Manga', 'PRIMARY');
+            const animeButton = functions.createButton('animeSetup', 'Anime', 'PRIMARY');
+            message.channel.send({content: `Plutôt manga ou anime ?`, components: [mangaButton, animeButton] });
             break;
     }
 }

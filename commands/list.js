@@ -1,4 +1,5 @@
-module.exports.run = async (client, message, args, functions, Discord) => {
+module.exports.run = async (client, message, args, functions) => {
+    message.delete();
     switch(args[0]) {
         case "manga":
             try {
@@ -15,20 +16,8 @@ module.exports.run = async (client, message, args, functions, Discord) => {
         } catch (err) {}
         break;
         default:
-            const mangaButton = new Discord.MessageActionRow()
-			.addComponents(
-				new Discord.MessageButton()
-					.setCustomId('manga')
-					.setLabel('Manga')
-					.setStyle('PRIMARY'),
-			);
-            const animeButton = new Discord.MessageActionRow()
-			.addComponents(
-				new Discord.MessageButton()
-					.setCustomId('anime')
-					.setLabel('Anime')
-					.setStyle('PRIMARY'),
-			);
+            const mangaButton = functions.createButton('mangaList', 'Manga', 'PRIMARY');
+            const animeButton = functions.createButton('animeList', 'Anime', 'PRIMARY');
             message.channel.send({content: `Plutôt manga ou anime ?`, components: [mangaButton, animeButton] });
             break;
     }

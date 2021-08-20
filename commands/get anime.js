@@ -23,7 +23,7 @@ module.exports.run = async (client, message, args, functions, buttons) => {
 
         let text = `Voici les 5 derniers épisodes sortis :\n\`\`\``;
         for(let i=0; i<5; i++) {
-            text += `${i}: ${titres[i][0]} (${titres[i][1]})\n`
+            text += `${i}: ${titres[i][0]} - Episode ${titres[i][1].replace(/0/g,"")}\n`
         }
         text += "```";
 

@@ -1,4 +1,4 @@
-module.exports.run = async (client, message, args, functions, buttons) => {
+module.exports.run = async (client, message, args, functions) => {
     const fetch = require('node-fetch');
     const RSS_URL = "https://scantrad.net/rss/";
 
@@ -10,7 +10,7 @@ module.exports.run = async (client, message, args, functions, buttons) => {
 
         for(let i=0; i<titres.length; i++) {
             titres[i] = titres[i].replace("<title><![CDATA[Scan - ","").replace("]]></title>", "");
-            let titre = titres[i].replace(/( Chapitre [0-9]+)/g,""), chap = titres[i].match(/(Chapitre ([0-9])+)/g)[0].replace("Chapitre ", "");
+            let titre = titres[i].replace(/( Chapitre ([0-9]|\.)+)/g,""), chap = titres[i].match(/(Chapitre ([0-9]|\.)+)/g)[0].replace("Chapitre ", "");
             titres[i] = [titre,chap];
 
             let already = false;
@@ -22,7 +22,7 @@ module.exports.run = async (client, message, args, functions, buttons) => {
 
         let text = `Voici les 5 derniers chapitres sortis :\n\`\`\``;
         for(let i=0; i<5; i++) {
-            text += `${i}: ${titres[i][0]} (${titres[i][1]})\n`
+            text += `${i+1}: ${titres[i][0]} - Chapitre ${titres[i][1].replace(/0/g,"")}\n`
         }
         text += "```";
 

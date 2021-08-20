@@ -13,6 +13,6 @@ module.exports.run = async (client, message, args, functions) => {
             text += `+ ${file.replace(".json", "")}\n-   Chapitre ${infos.dernierChap}\n`; 
         });
         text += "```"
-        message.channel.send(text);
+        message.channel.send(text).then(m => { setTimeout(function () { m.delete()} , 15000) });
     });
 }
