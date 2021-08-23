@@ -36,13 +36,13 @@ module.exports = class pamlol {
     getUserId(arg, message) {
         let userId;
 
-        if(!arg) { message.channel.send(`Rentre un args stp.`); return -1; }
+        if(!arg) { message.channel.send(`Cette commande requiert un argument d'entrée.`).then(m => { setTimeout(function () { m.delete()} , 5*1000) }); return -1; }
         else if(arg.startsWith("<@!")) userId = arg.substring(0,arg.indexOf(">")).slice(3);
         else if(arg.startsWith("<@")) userId = arg.substring(0,arg.indexOf(">")).slice(2);
         else userId = arg;
 
         if(!this.client.guilds.cache.get(message.guild.id).members.cache.get(arg)) {
-            message.channel.send(`Merci de citer un joueur présent sur le serveur.`)
+            message.channel.send(`Merci de citer un joueur présent sur le serveur.`).then(m => { setTimeout(function () { m.delete()} , 5*1000) });
             return -1;
         }
 
@@ -82,6 +82,7 @@ module.exports = class pamlol {
                             else if(data.dernierChap === manga[titres.indexOf(file)][1]) return;
         
                             data.dernierChap = manga[titres.indexOf(file)][1];
+                            // TODO : supprimer l'annonce précédente (save msgId dans file ou get manuellement)
                             guild.channels.cache.get(data.channelID).send({content: `Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`});
 
                             fs.writeFile(`./servers/${guild.id}/manga/${file}.json`, JSON.stringify(data), (err) => {
@@ -116,13 +117,13 @@ module.exports = class pamlol {
     }
     hasRight(message) {
         if(message.member.id == "217200239264661504" || message.guild.member(message.author).hasPermission('ADMINISTRATOR')) return true;
-        message.reply(`T'as pas les droits mskn.`)
+        message.reply(`Tu n'as pas les autorisations nécessaires.`).then(m => { setTimeout(function () { m.delete()} , 5*1000) });
         return false;
     }
     async buttonClick(interaction) {
         interaction.deferUpdate();
         interaction.deleteReply();
-        if(interaction.customId.includes('anime')) interaction.channel.send("Désolé, la partie anime n'est pas encore prête.");
+        if(interaction.customId.includes('anime')) interaction.channel.send("Désolé, la partie anime n'est pas encore prête.").then(m => { setTimeout(function () { m.delete()} , 5*1000) });
         else if(interaction.customId === 'mangaSetup') this.getUnsetup(interaction, 'manga');
         else if(interaction.customId.includes('manga')) require(`./commands/${interaction.customId.replace("manga","").toLowerCase()} manga.js`).run(this.client, interaction, [], this);
         else if(interaction.customId === '') return;
@@ -133,13 +134,23 @@ module.exports = class pamlol {
             new this.Discord.MessageButton()
             .setCustomId(id)
             .setLabel(label)
-            .setStyle(style),
+            .setStyle(style)
+        );
+    }   
+    createLinkButton(url, label) {
+        return new this.Discord.MessageActionRow()
+		.addComponents(
+            new this.Discord.MessageButton()
+            .setURL(url)
+            .setLabel(label)
+            .setStyle('LINK')
         );
     }
     getUnsetup(message, type) {
         let elClient = this.client;
         const fs = require('fs');
         if(type != "manga" && type != "anime") return;
+
         let directoryPath = require('path').join(`./servers/${message.guild.id}/`, type), files = [];
         fs.readdir(directoryPath, function (err, result) {
             if (err) {
@@ -169,12 +180,12 @@ module.exports = class pamlol {
             text += '```';
 
             message.channel.send(text)
-            .then(m => { setTimeout( async function () { m.delete()} , 10000) });
-            message.channel.awaitMessages({filter:(m => m.member.id === message.member.id), max: 1, time: 30000})
+            .then(m => { setTimeout( async function () { m.delete()} , 10*1000) });
+            message.channel.awaitMessages({filter:(m => m.member.id === message.member.id), max: 1, time: 30*1000})
             .then(collected => {
                 let m = collected.first();
-                if(!m.content.match(/^[0-9]+$/g)) { m.channel.send("Merci d'entrer le nombre correspondant au manga que tu souhaites configurer.").then(m => { setTimeout(async function () { m.delete()} , 3000) }); m.delete(); return; }
-                if(parseInt(m.content) < 1 || parseInt(m.content) > files.length) { m.channel.send({content:"Merci d'entrer un nombre présent dans la liste."}).then(m => { setTimeout(async function () { m.delete()} , 3000) }); m.delete(); return; }
+                if(!m.content.match(/^[0-9]+$/g)) { m.channel.send("Merci d'entrer le nombre correspondant au manga que tu souhaites configurer.").then(m => { setTimeout(async function () { m.delete()} , 3*1000) }); m.delete(); return; }
+                if(parseInt(m.content) < 1 || parseInt(m.content) > files.length) { m.channel.send({content:"Merci d'entrer un nombre présent dans la liste."}).then(m => { setTimeout(async function () { m.delete()} , 3*1000) }); m.delete(); return; }
                 m.delete();
                 require(`./commands/setup manga.js`).run(elClient, message, files[parseInt(m.content)-1].split(' '), this);
             });

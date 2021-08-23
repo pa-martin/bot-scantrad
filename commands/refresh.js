@@ -2,6 +2,7 @@ module.exports.run = async (client, message, args, functions) => {
     const fs = require('fs');
     const fetch = require('node-fetch');
     const RSS_URL = "https://scantrad.net/rss/";
+    message.delete();
 
     fetch(RSS_URL)
     .then(response => response.text())
@@ -37,7 +38,7 @@ module.exports.run = async (client, message, args, functions) => {
                 }
             });
             if(args[0] != "true") console.log(`${functions.time("INFO")} Un refresh a été effectué sur le serveur "${message.guild.name}".`);
-            if(args[0] != "true") message.channel.send(`Refresh terminé !`);
+            if(args[0] != "true") message.channel.send(`Refresh terminé !`).then(m => { setTimeout(function () { m.delete()} , 5*1000) });;
         });
     })
     .catch(err => console.log(err));

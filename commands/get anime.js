@@ -27,6 +27,6 @@ module.exports.run = async (client, message, args, functions, buttons) => {
         }
         text += "```";
 
-        message.channel.send(text);
+        message.channel.send(text).then(m => { setTimeout(function () { m.delete()} , 10*1000) });
     });
 }

@@ -1,4 +1,5 @@
 module.exports.run = async (client, message, args, functions) => {
+    message.delete();
     if(!functions.hasRight(message)) return;
     
     switch(args[0]) {

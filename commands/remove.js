@@ -1,7 +1,6 @@
 module.exports.run = async (client, message, args, functions) => {
-    functions.hasRight(message);
     message.delete();
-    const fs = require('fs');
+    functions.hasRight(message);
 
     switch(args[0]) {
         case "manga":

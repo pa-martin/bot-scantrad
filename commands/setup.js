@@ -1,11 +1,11 @@
 module.exports.run = async (client, message, args, functions) => {
+    message.delete();
     if(!functions.hasRight(message)) return;
     
     switch(args[0]) {
         case "manga":
             try {
                 let commandFile = require(`./setup manga.js`);
-                // message.content = message.content.slice(("!setup manga ").length);
                 args.shift();
                 commandFile.run(client, message, args, functions);
             } catch (err) {}
@@ -13,7 +13,7 @@ module.exports.run = async (client, message, args, functions) => {
         case "anime":
             try {
                 let commandFile = require(`./setup anime.js`);
-                message.content = message.content.slice(("!setup anime ").length);
+                args.shift();
                 commandFile.run(client, message, args, functions);
             } catch (err) {}
             break;

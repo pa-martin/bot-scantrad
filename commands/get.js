@@ -1,4 +1,6 @@
-module.exports.run = async (client, message, args, functions) => {    
+module.exports.run = async (client, message, args, functions) => {
+    message.delete();
+
     switch(args[0]) {
         case "manga":
             try {
