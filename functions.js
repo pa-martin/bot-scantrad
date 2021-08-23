@@ -121,7 +121,7 @@ module.exports = class pamlol {
     }
     async buttonClick(interaction) {
         interaction.deferUpdate();
-        // interaction.deleteReply();
+        interaction.deleteReply();
         if(interaction.customId.includes('anime')) interaction.channel.send("Désolé, la partie anime n'est pas encore prête.");
         else if(interaction.customId === 'mangaSetup') this.getUnsetup(interaction, 'manga');
         else if(interaction.customId.includes('manga')) require(`./commands/${interaction.customId.replace("manga","").toLowerCase()} manga.js`).run(this.client, interaction, [], this);
