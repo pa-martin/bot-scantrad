@@ -1,3 +1,4 @@
+const fs = require("fs");
 module.exports = class pamlol {
     constructor(client, Discord) {
         this.client = client;
@@ -82,11 +83,13 @@ module.exports = class pamlol {
                             else if(data.dernierChap === manga[titres.indexOf(file)][1]) return;
         
                             data.dernierChap = manga[titres.indexOf(file)][1];
-                            // TODO : supprimer l'annonce précédente (save msgId dans file ou get manuellement)
-                            guild.channels.cache.get(data.channelID).send({content: `Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`});
+                            if(data.msgID != null) guild.channels.cache.get(data.channelID).messages.fetch(data.msgID).then(m => m.delete());
+                            guild.channels.cache.get(data.channelID).send({content: `Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`}).then(m => {
+                                data.msgID = m.id;
 
-                            fs.writeFile(`./servers/${guild.id}/manga/${file}.json`, JSON.stringify(data), (err) => {
-                                if(err) console.log(functions.time("ERROR") + err);
+                                fs.writeFile(`./servers/${guild.id}/manga/${file}.json`, JSON.stringify(data), (err) => {
+                                    if(err) console.log(functions.time("ERROR") + err);
+                                });
                             });
                         }catch(err){
                             console.log(err);

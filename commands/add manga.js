@@ -38,7 +38,8 @@ module.exports.run = async (client, message, args, functions) => {
             data = {
                 "dernierChap": null,
                 "channelID": null,
-                "lienChap": null
+                "lienChap": null,
+                "msgID": null
             }
             fs.writeFile(`./servers/${m.guild.id}/manga/${manga[m.content]}.json`, JSON.stringify(data), (err) => {
                 if(err) console.log(functions.time("ERROR") + err);
