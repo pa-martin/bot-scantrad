@@ -2,7 +2,7 @@ module.exports.run = async (client, message, args, functions) => {
     const fs = require('fs');
     const fetch = require('node-fetch');
     const RSS_URL = "https://scantrad.net/rss/";
-    message.delete();
+    if(message.type != 'PING' && message.type != 'APPLICATION_COMMAND' && message.type != 'MESSAGE_COMPONENT') message.delete();
 
     fetch(RSS_URL)
     .then(response => response.text())

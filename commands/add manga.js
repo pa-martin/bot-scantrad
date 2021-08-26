@@ -25,15 +25,16 @@ module.exports.run = async (client, message, args, functions) => {
             else text += `${i}: ${manga[i]}\n`
         }
         text += "```";
-        message.channel.send(text).then(m => { setTimeout(function () { m.delete()} , 15*1000) });
+        message.channel.send(text).then(m => { setTimeout(async function () { m.delete()} , 15*1000) });
 
         message.channel.awaitMessages({filter:(m => m.member.id === message.member.id), max: 1, time: 15000})
         .then(collected => {
             let m = collected.first();
+            m.delete();
             if(!m.content.match(/^-?[0-9]+$/)) { m.channel.send(`Merci d'entrer un nombre !`).then(m => { setTimeout(function () { m.delete()} , 5*1000) }); return; }
             if(m.content < 0 || m.content > (manga.length-1)) { m.channel.send("Le choix n'est pas dans la liste !").then(m => { setTimeout(function () { m.delete()} , 5*1000) });  return; }
 
-            if(fs.existsSync(`./servers/${m.guild.id}/manga/${manga[m.content]}.json`)) { m.channel.send(`Le manga ${manga[m.content]} à déjà été ajouté ! (\`!setup manga ${manga[m.content]}\`)`).then(m => { setTimeout(function () { m.delete()} , 5*1000) }); return; }
+            if(fs.existsSync(`./servers/${m.guild.id}/manga/${manga[m.content]}.json`)) { m.channel.send(`Le manga ${manga[m.content]} à déjà été ajouté ! (\`!setup manga ${manga[m.content]}\`)`).then(m => { setTimeout(function () { if(!m.deleted) { m.delete(); }} , 5*1000) }); return; }
             data = {
                 "dernierChap": null,
                 "channelID": null,
@@ -43,8 +44,8 @@ module.exports.run = async (client, message, args, functions) => {
                 if(err) console.log(functions.time("ERROR") + err);
                 else {
                     console.log(`${functions.time("INFO")} Le manga ${manga[m.content]} à été ajouté pour le serveur ${m.guild.name}.`);
-                    m.channel.send(`Le manga ${manga[m.content]} à bien été ajouté ! Setup les annonces avec la commande \`!setup manga ${manga[m.content]}\`.`).then(m => { setTimeout(function () { m.delete()} , 5*1000) });
-                    // TODO : button pour setup
+                    const button = functions.createButton(`mangaSetup.${manga[m.content]}`,"Click ici pour setup","PRIMARY");
+                    m.channel.send({content:`Le manga ${manga[m.content]} à bien été ajouté ! Setup les annonces avec la commande \`!setup manga ${manga[m.content]}\`.`, components:[button]});
                     require(`./refresh.js`).run(client, message, ["true"], functions);
                 }
             });

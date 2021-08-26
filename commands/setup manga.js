@@ -25,6 +25,7 @@ module.exports.run = async (client, message, args, functions) => {
             message.channel.awaitMessages({filter:(m => m.member.id === message.member.id), max: 1, time: 10*1000})
             .then(collected => {
                 let m = collected.first();
+                m.delete();
                 if(!m.content.match(/(^<#[0-9]+>$)|(^[0-9]+$)/g)) { m.channel.send(`Merci de rentrer un channel.`).then(m => { setTimeout(function () { m.delete()} , 5*1000) }); return; }
                 data.channelID = m.content.replace(/<|>|#/g, "");
                 fs.writeFile(`./servers/${message.guild.id}/manga/${args.join(" ")}.json`, JSON.stringify(data), (err) => {

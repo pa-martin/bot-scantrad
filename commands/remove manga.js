@@ -18,7 +18,7 @@ module.exports.run = async (client, message, args, functions) => {
             }
         })
         .catch((err) => {
-            message.reply('Temps écoulé. ⌛');
+            message.channel.send('Temps écoulé. ⌛').then( m => setTimeout(function(){ m.delete() }, 5000) );
             if(err) console.log(functions.time("ERROR") + err);
         });
     } else {
