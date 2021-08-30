@@ -43,8 +43,7 @@ module.exports.run = async (client, message, args, functions) => {
             if(fs.existsSync(`./dms/${m.member.id}/manga/${manga[m.content]}.json`)) { m.channel.send(`Le manga ${manga[m.content]} à déjà été ajouté ! (\`!dm setup manga ${manga[m.content]}\`)`).then(m => { setTimeout(function () { if(!m.deleted) { m.delete(); }} , 5*1000) }); return; }
             data = {
                 "dernierChap": null,
-                "lienChap": null,
-                "msgID": null
+                "lienChap": null
             }
             fs.writeFile(`./dms/${m.member.id}/manga/${manga[m.content]}.json`, JSON.stringify(data), (err) => {
                 if(err) console.log(functions.time("ERROR") + err);

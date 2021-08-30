@@ -84,7 +84,7 @@ module.exports = class pamlol {
         
                             data.dernierChap = manga[titres.indexOf(file)][1];
                             if(data.msgID != null) guild.channels.cache.get(data.channelID).messages.fetch(data.msgID).then(m => m.delete());
-                            guild.channels.cache.get(data.channelID).send({content: `Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`}).then(m => {
+                            guild.channels.cache.get(data.channelID).send({content: `Oyé, Oyé, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`}).then(m => {
                                 data.msgID = m.id;
 
                                 fs.writeFile(`./servers/${guild.id}/manga/${file}.json`, JSON.stringify(data), (err) => {
@@ -112,14 +112,10 @@ module.exports = class pamlol {
                                 else if(data.dernierChap === manga[titres.indexOf(file)][1]) return;
 
                                 data.dernierChap = manga[titres.indexOf(file)][1];
-                                if(data.msgID != null) client.users.cache.get(folder).dmChannel.messages.fetch(data.msgID).then(m => m.delete());
-                                client.users.fetch(folder).then(u => u.send({content: `Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`}).then(m => {
-                                    data.msgID = m.id;
-
-                                    fs.writeFile(`./dms/${folder}/manga/${file}.json`, JSON.stringify(data), (err) => {
-                                        if(err) console.log(functions.time("ERROR") + err);
-                                    });
-                                }));
+                                client.users.fetch(folder).then(u => u.send({content: `Oyé, Oyé, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`}));
+                                fs.writeFile(`./dms/${folder}/manga/${file}.json`, JSON.stringify(data), (err) => {
+                                    if (err) console.log(functions.time("ERROR") + err);
+                                });
                             }catch(err){
                                 console.log(err);
                             }
