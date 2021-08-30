@@ -1,5 +1,6 @@
 # N'a pas sa place sur le git
 .vscode/
+.idea/
 node_modules/
 commands/test*.js
 
