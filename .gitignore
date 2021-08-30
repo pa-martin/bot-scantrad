@@ -7,3 +7,4 @@ commands/test*.js
 # Contient des infos
 config.json
 servers/*/
+dms/*/

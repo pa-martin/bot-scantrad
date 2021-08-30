@@ -34,12 +34,12 @@ module.exports.run = async (client, message, args, functions) => {
                 message.channel.send(`Oki tout est noté ! Merci bg ;)`).then(m => { setTimeout(function () { m.delete()} , 5*1000) });
                 
             }).catch((err) => {
-                message.reply('Temps écoulé. ⌛').then(m => { setTimeout(function () { m.delete()} , 5*1000) });
+                message.channel.send('Temps écoulé. ⌛').then(m => { setTimeout(function () { m.delete()} , 5*1000) });
                 if(!err.stack.includes("TypeError: Cannot read property 'content' of undefined")) console.log(`${functions.time("ERROR")} ${err}`);
             });
 
         }).catch((err) => {
-            message.reply('Temps écoulé. ⌛').then(m => { setTimeout(function () { m.delete()} , 5*1000) });
+            message.channel.send('Temps écoulé. ⌛').then(m => { setTimeout(function () { m.delete()} , 5*1000) });
             if(!err.stack.includes("TypeError: Cannot read property 'content' of undefined")) console.log(`${functions.time("ERROR")} ${err}`);
         });
 

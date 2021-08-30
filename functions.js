@@ -97,10 +97,40 @@ module.exports = class pamlol {
                     });
                 });
             });
+            let client = this.client;
+
+            // let directoryPath = require('path').join(`./dms/${guild.id}/`, "manga"), files = [];
+            fs.readdir(require('path').join('./dms', ''), function (err, result) {
+                result.forEach(function (folder) {
+                    fs.readdir(require('path').join(`./dms/${folder}/`, 'manga'), function (err, result2) {
+                        result2.forEach(file => {
+                            try {
+                                file = file.replace('.json', '');
+                                let data = JSON.parse(fs.readFileSync(`./dms/${folder}/manga/${file}.json`));
+                                if(!(data.dernierChap != null && manga[titres.indexOf(file)] != undefined)) return;
+                                // else if(titres.indexOf(file) == -1) { console.log(`Pas de chapitre récent de ${file}.`); return; }
+                                else if(data.dernierChap === manga[titres.indexOf(file)][1]) return;
+
+                                data.dernierChap = manga[titres.indexOf(file)][1];
+                                if(data.msgID != null) client.users.cache.get(folder).dmChannel.messages.fetch(data.msgID).then(m => m.delete());
+                                client.users.fetch(folder).then(u => u.send({content: `Oyé, Oye, un nouveau chapitre de ${file} vient de sortir (le ${parseInt(data.dernierChap)}) :\n${data.lienChap}${data.dernierChap}`}).then(m => {
+                                    data.msgID = m.id;
+
+                                    fs.writeFile(`./dms/${folder}/manga/${file}.json`, JSON.stringify(data), (err) => {
+                                        if(err) console.log(functions.time("ERROR") + err);
+                                    });
+                                }));
+                            }catch(err){
+                                console.log(err);
+                            }
+                        });
+                    });
+                });
+            });
         })
         .catch(err => {
             if(err.message.includes("request to https://scantrad.net/rss/ failed, reason: connect ETIMEDOUT 185.178.208.176:443")) console.log("erreur de réponse");
-            else if(err.code = 'ENOTFOUND') console.log('erreur de connexion')
+            // else if(err.code = 'ENOTFOUND') console.log('erreur de connexion')
             else if(err.message.includes("request to https://scantrad.net/rss/ failed, reason: self signed certificate")) console.log("erreur de certificat");
             else console.log(err);
         });
@@ -120,7 +150,7 @@ module.exports = class pamlol {
     }
     hasRight(message) {
         if(message.member.id == "217200239264661504" || message.guild.member(message.author).hasPermission('ADMINISTRATOR')) return true;
-        message.reply(`Tu n'as pas les autorisations nécessaires.`).then(m => { setTimeout(function () { m.delete()} , 5*1000) });
+        message.channel.send(`Tu n'as pas les autorisations nécessaires.`).then(m => { setTimeout(function () { m.delete()} , 5*1000) });
         return false;
     }
     async buttonClick(interaction) {
@@ -129,6 +159,8 @@ module.exports = class pamlol {
         if(interaction.customId.includes('anime')) interaction.channel.send("Désolé, la partie anime n'est pas encore prête.").then(m => { setTimeout(function () { m.delete()} , 5*1000) });
         else if(interaction.customId.startsWith('mangaSetup.')) require(`./commands/setup manga.js`).run(this.client, interaction, interaction.customId.replace("mangaSetup.","").split(" "), this);
         else if(interaction.customId === 'mangaSetup') this.getUnsetup(interaction, 'manga');
+        else if(interaction.customId.startsWith('dm setup manga.')) require(`./commands/dm setup manga.js`).run(this.client, interaction, interaction.customId.replace("dm setup manga.","").split(" "), this);
+        else if(interaction.customId.startsWith('dm')) require(`./commands/${interaction.customId}.js`).run(this.client, interaction, [], this);
         else if(interaction.customId.includes('manga')) require(`./commands/${interaction.customId.replace("manga","").toLowerCase()} manga.js`).run(this.client, interaction, [], this);
         else if(interaction.customId === '') return;
     }
@@ -193,6 +225,24 @@ module.exports = class pamlol {
                 m.delete();
                 require(`./commands/setup manga.js`).run(elClient, message, files[parseInt(m.content)-1].split(' '), this);
             });
+        });
+    }
+    async createDmsFolder(message) {
+        fs.mkdirSync(require('path').join(`./dms/`, message.member.id), (err) => {
+            if (err) {
+                return console.log(`${functions.time("ERROR")} Impossible de créer le dossier principal pour le membre ${m.member.displayName} (id : ${m.member.id}).`);
+                ;
+            }
+        });
+        fs.mkdirSync(require('path').join(`./dms/${message.member.id}/`, "manga"), (err) => {
+            if (err) {
+                return console.log(`${functions.time("ERROR")} Impossible de créer le dossier "manga" pour le membre ${m.member.displayName} (id : ${m.member.id}).`);;
+            }
+        });
+        return fs.mkdirSync(require('path').join(`./dms/${message.member.id}/`, "anime"), (err) => {
+            if (err) {
+                return console.log(`${functions.time("ERROR")} Impossible de créer le dossier "anime" pour le membre ${m.member.displayName} (id : ${m.member.id}).`);;
+            }
         });
     }
 }
