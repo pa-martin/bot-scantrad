@@ -47,7 +47,7 @@ module.exports.run = async (client, message, args, functions) => {
                     console.log(`${functions.time("INFO")} Le manga ${manga[m.content]} à été ajouté pour le serveur ${m.guild.name}.`);
                     const button = functions.createButton(`mangaSetup.${manga[m.content]}`,"Click ici pour setup","PRIMARY");
                     m.channel.send({content:`Le manga ${manga[m.content]} à bien été ajouté ! Setup les annonces avec la commande \`!setup manga ${manga[m.content]}\`.`, components:[button]});
-                    require(`./refresh.js`).run(client, message, ["true"], functions);
+                    require(`../refresh.js`).run(client, message, ["true"], functions);
                 }
             });
         }).catch((err) => {

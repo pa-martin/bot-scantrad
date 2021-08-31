@@ -137,10 +137,10 @@ module.exports = class pamlol {
 
         switch (date.getSeconds()%20*delay < delay) {
             case true:
-                this.client.user.setActivity("!add manga", {type: 'COMPETING'});
+                this.client.user.setActivity("!add", {type: 'WATCHING'});
                 break;
             case false:
-                this.client.user.setActivity(`@pam#6088`, { type: 'WATCHING'});
+                this.client.user.setActivity(`@pam#6088`, { type: 'LISTENING'});
                 break;
         }
     }
@@ -153,11 +153,11 @@ module.exports = class pamlol {
         interaction.deferUpdate();
         interaction.deleteReply();
         if(interaction.customId.includes('anime')) interaction.channel.send("Désolé, la partie anime n'est pas encore prête.").then(m => { setTimeout(function () { m.delete()} , 5*1000) });
-        else if(interaction.customId.startsWith('mangaSetup.')) require(`./commands/setup manga.js`).run(this.client, interaction, interaction.customId.replace("mangaSetup.","").split(" "), this);
+        else if(interaction.customId.startsWith('mangaSetup.')) require(`./commands/serveur/setup manga.js`).run(this.client, interaction, interaction.customId.replace("mangaSetup.","").split(" "), this);
         else if(interaction.customId === 'mangaSetup') this.getUnsetup(interaction, 'manga');
-        else if(interaction.customId.startsWith('dm setup manga.')) require(`./commands/dm setup manga.js`).run(this.client, interaction, interaction.customId.replace("dm setup manga.","").split(" "), this);
-        else if(interaction.customId.startsWith('dm')) require(`./commands/${interaction.customId}.js`).run(this.client, interaction, [], this);
-        else if(interaction.customId.includes('manga')) require(`./commands/${interaction.customId.replace("manga","").toLowerCase()} manga.js`).run(this.client, interaction, [], this);
+        else if(interaction.customId.startsWith('dm setup manga.')) require(`./commands/dm/setup manga.js`).run(this.client, interaction, interaction.customId.replace("dm setup manga.","").split(" "), this);
+        else if(interaction.customId.startsWith('dm/')) require(`./commands/${interaction.customId}.js`).run(this.client, interaction, [], this);
+        else if(interaction.customId.includes('manga')) require(`./commands/serveur/${interaction.customId.replace("manga","").toLowerCase()} manga.js`).run(this.client, interaction, [], this);
         else if(interaction.customId === '') return;
     }
     createButton(id, label, style) {

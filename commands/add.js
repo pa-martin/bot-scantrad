@@ -5,7 +5,7 @@ module.exports.run = async (client, message, args, functions) => {
     switch(args[0]) {
         case "manga":
             try {
-                let commandFile = require(`./add manga.js`);
+                let commandFile = require(`./serveur/add manga.js`);
                 args.shift();
                 commandFile.run(client, message, args, functions);
             } catch (err) {}
